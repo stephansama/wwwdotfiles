@@ -1,0 +1,53 @@
+---
+import { getEntry } from "astro:content";
+import Base from "../layouts/Base.astro";
+
+const data = await getEntry("configs", "brewfile");
+
+const { brew, cask } = data?.data as Record<"brew" | "cask", string[]>;
+---
+
+<Base>
+	<div class="flex justify-around relative">
+		<div>
+			<h3 class="py-4">Brew packages ({brew.length})</h3>
+			<ul class="list-disc">
+				{
+					brew
+						.sort((a, b) => a.localeCompare(b))
+						.map((pkg) => (
+							<li>
+								<a
+									href={`https://formulae.brew.sh/formula/${pkg}`}
+									target="_blank"
+									rel="noreferrer"
+								>
+									{pkg}
+								</a>
+							</li>
+						))
+				}
+			</ul>
+		</div>
+		<div>
+			<h3 class="py-4">Brew cask packages ({cask.length})</h3>
+			<ul class="list-disc">
+				{
+					cask
+						.sort((a, b) => a.localeCompare(b))
+						.map((pkg) => (
+							<li>
+								<a
+									href={`https://formulae.brew.sh/cask/${pkg}`}
+									target="_blank"
+									rel="noreferrer"
+								>
+									{pkg}
+								</a>
+							</li>
+						))
+				}
+			</ul>
+		</div>
+	</div>
+</Base>

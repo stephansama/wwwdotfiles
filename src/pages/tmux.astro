@@ -1,0 +1,13 @@
+---
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+
+// use these as the man pages
+// https://man.openbsd.org/OpenBSD-current/man1/tmux.1
+const configs = await getCollection("configs");
+
+const tmux = configs.find((id) => id.id === "tmux");
+console.log(tmux);
+---
+
+<Base> TMUX </Base>

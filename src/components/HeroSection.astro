@@ -1,0 +1,28 @@
+---
+import { getEntry } from "astro:content";
+
+import { render } from "astro:content";
+
+const readme = await getEntry("configs", "readme");
+
+if (!readme) {
+	throw new Error("not able to find readme");
+}
+
+const { Content } = await render(readme);
+---
+
+<div class="flex justify-center mx-auto">
+	<a
+		href="https://github.com/stephansama/stephansama"
+		target="_blank"
+		rel="noreferrer"
+	>
+		<img src="https://github.com/stephansama.png" class="rounded-full w-32" />
+	</a>
+</div>
+<div
+	class="prose-lg dark:prose-invert dark:text-ctp-text [&>h2]:m-0 [&>*>li]:m-0 leading-normal"
+>
+	<Content />
+</div>

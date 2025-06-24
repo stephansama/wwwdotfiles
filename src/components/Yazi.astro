@@ -1,0 +1,23 @@
+---
+import { getEntry } from "astro:content";
+
+const data = await getEntry("configs", "yaziPackageToml");
+
+console.log(data);
+
+const plugins = data?.data?.plugins as string[];
+---
+
+<h2 id="yazi">Yazi</h2>
+
+<ul>
+	{
+		plugins.map((plugin) => {
+			return (
+				<li>
+					<a href={`https://github.com/${plugin}.yazi`}>{plugin}</a>
+				</li>
+			);
+		})
+	}
+</ul>
