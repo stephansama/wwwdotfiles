@@ -12,14 +12,20 @@ if (!readme) {
 const { Content } = await render(readme);
 ---
 
-<div class="flex justify-center mx-auto">
+<div class="flex items-center gap-2 mx-auto">
 	<a
 		href="https://github.com/stephansama/stephansama"
 		target="_blank"
 		rel="noreferrer"
 	>
-		<img src="https://github.com/stephansama.png" class="rounded-full w-32" />
+		<img
+			src="https://github.com/stephansama.png"
+			class="rounded-full w-32"
+			width="128px"
+			height="128px"
+		/>
 	</a>
+	<h1 class="text-3xl">Stephan Randle</h1>
 </div>
 <div
 	class="prose-lg dark:prose-invert dark:text-ctp-text [&>h2]:m-0 [&>*>li]:m-0 leading-normal"

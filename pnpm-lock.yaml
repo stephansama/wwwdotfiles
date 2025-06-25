@@ -14,6 +14,9 @@ importers:
       '@iconify-json/devicon':
         specifier: ^1.2.29
         version: 1.2.29
+      '@iconify-json/logos':
+        specifier: ^1.2.4
+        version: 1.2.4
       '@iconify-json/simple-icons':
         specifier: ^1.2.39
         version: 1.2.39
@@ -39,6 +42,9 @@ importers:
       '@tailwindcss/typography':
         specifier: ^0.5.16
         version: 0.5.16(tailwindcss@4.1.10)
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       nanovis:
         specifier: ^0.1.3
         version: 0.1.3
@@ -57,6 +63,9 @@ importers:
       prettier-plugin-sort-package-json:
         specifier: ^1.1.0
         version: 1.1.0(prettier@3.6.0)
+      tailwind-merge:
+        specifier: ^3.3.1
+        version: 3.3.1
       toml:
         specifier: ^3.0.0
         version: 3.0.0
@@ -278,6 +287,9 @@ packages:
 
   '@iconify-json/devicon@1.2.29':
     resolution: {integrity: sha512-TXQD2J/A9XDegvL1dQMWFl3bUb7HBMomFCLpHYns4J8yfBy536Bm/uVGqcNIw/a5nZzkxh62Nb/JR2J1Uo4yMw==}
+
+  '@iconify-json/logos@1.2.4':
+    resolution: {integrity: sha512-XC4If5D/hbaZvUkTV8iaZuGlQCyG6CNOlaAaJaGa13V5QMYwYjgtKk3vPP8wz3wtTVNVEVk3LRx1fOJz+YnSMw==}
 
   '@iconify-json/simple-icons@1.2.39':
     resolution: {integrity: sha512-XlhW73c4dHvUrwWckVY76HDjnaZ2fWKD6hNZtd5kuv23GC0g3Lu0MXnYscpkIYOeiXO+Gtlw8FM53J7C84mCtA==}
@@ -1836,6 +1848,9 @@ packages:
     engines: {node: '>=14.0.0'}
     hasBin: true
 
+  tailwind-merge@3.3.1:
+    resolution: {integrity: sha512-gBXpgUm/3rp1lMZZrM/w7D8GKqshif0zAymAhbCyIt8KMe+0v9DQ7cdYLR4FHH/cKpdTXb+A/tKKU3eolfsI+g==}
+
   tailwindcss@4.1.10:
     resolution: {integrity: sha512-P3nr6WkvKV/ONsTzj6Gb57sWPMX29EPNPopo7+FcpkQaNsrNpZ1pv8QmrYI2RqEKD7mlGqLnGovlcYnBK0IqUA==}
 
@@ -2339,6 +2354,10 @@ snapshots:
     optional: true
 
   '@iconify-json/devicon@1.2.29':
+    dependencies:
+      '@iconify/types': 2.0.0
+
+  '@iconify-json/logos@1.2.4':
     dependencies:
       '@iconify/types': 2.0.0
 
@@ -4248,6 +4267,8 @@ snapshots:
       css-what: 6.1.0
       csso: 5.0.5
       picocolors: 1.1.1
+
+  tailwind-merge@3.3.1: {}
 
   tailwindcss@4.1.10: {}
 

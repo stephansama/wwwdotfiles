@@ -9,6 +9,12 @@
 	--tw-prose-links: var(--color-ctp-text);
 }
 
+h2,
+h3,
+h4 {
+	@apply scroll-m-16;
+}
+
 div[align="center"] {
 	@apply flex items-center justify-center gap-4 my-3;
 }

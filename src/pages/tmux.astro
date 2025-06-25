@@ -1,13 +1,163 @@
 ---
-import { getCollection } from "astro:content";
+import { getEntry } from "astro:content";
+import { Heading } from "../components";
 import Base from "../layouts/Base.astro";
+import { cn } from "../styles/cn";
 
-// use these as the man pages
-// https://man.openbsd.org/OpenBSD-current/man1/tmux.1
-const configs = await getCollection("configs");
+const tmux = await getEntry("configs", "tmux");
 
-const tmux = configs.find((id) => id.id === "tmux");
-console.log(tmux);
+if (!tmux || !tmux.data) {
+	throw new Error("not able to find tmux");
+}
+
+const set = tmux.data.set as [string, string, string, string][];
+const bind = tmux.data.bind as [string, string, string, string][];
+
+const tmuxDocumentationUrl =
+	"https://man.openbsd.org/OpenBSD-current/man1/tmux.1";
+
+function getOptionUrl(option: string) {
+	if (option.startsWith("@plugin")) {
+		return "https://github.com/tmux-plugins/tpm";
+	}
+	if (option.startsWith("@catppuccin")) {
+		return "https://github.com/catppuccin/tmux";
+	}
+	if (option.startsWith("@continuum")) {
+		return "https://github.com/tmux-plugins/tmux-continuum";
+	}
+	if (option.startsWith("@resurrect")) {
+		return "https://github.com/tmux-plugins/tmux-resurrect";
+	}
+	return `${tmuxDocumentationUrl}#${option}`;
+}
 ---
 
-<Base> TMUX </Base>
+<Base>
+	<Heading id="options">TMUX Options</Heading>
+	<table class="relative" id="tmux-options-table">
+		<thead class="sticky divide-y bg-ctp-base top-16 divide-ctp-text-300">
+			<tr>
+				<td>Command</td>
+				<td>Flag</td>
+				<td>Option</td>
+				<td>Value</td>
+			</tr>
+		</thead>
+		<tbody class="font-mono">
+			{
+				set.map(([_set, flag, option, ...value], i) => {
+					const isPlugin = option === "@plugin";
+					return (
+						<tr class="even:bg-ctp-mantle">
+							<td id={`option-${i}`} class={cn("scroll-m-32")}>
+								<a
+									href={`https://man.openbsd.org/OpenBSD-current/man1/tmux.1#${_set}`}
+								>
+									{_set}
+								</a>
+							</td>
+							<td class="px-4 whitespace-nowrap">{flag}</td>
+							<td>
+								<a href={getOptionUrl(option)}>{option}</a>
+							</td>
+							<td class="px-4">
+								{isPlugin ? (
+									<a
+										href={`https://github.com/${value.join("").replace(/\'/g, "").replace(/#.*$/g, "")}`}
+										target="_blank"
+										rel="noreferrer"
+									>
+										{value}
+									</a>
+								) : (
+									value
+								)}
+							</td>
+						</tr>
+					);
+				})
+			}
+		</tbody>
+	</table>
+
+	<Heading id="keybindings">Keybindings</Heading>
+	<table class="font-mono">
+		<thead></thead>
+		<tbody>
+			{
+				bind.map(([method, key, command, value]) => {
+					return (
+						<tr class="even:bg-ctp-mantle">
+							<td>
+								<a
+									href={`${tmuxDocumentationUrl}#${method}`}
+									target="_blank"
+									rel="noreferrer"
+								>
+									{method}
+								</a>
+							</td>
+							<td class="px-4">{key}</td>
+							<td>
+								<a
+									href={`${tmuxDocumentationUrl}#${command}`}
+									target="_blank"
+									rel="noreferrer"
+								>
+									{command}
+								</a>
+							</td>
+							<td class="px-4">{value}</td>
+						</tr>
+					);
+				})
+			}
+		</tbody>
+	</table>
+</Base>
+
+<script>
+	let loaded = false;
+	function listener() {
+		if (loaded) return;
+		const table = document.getElementById("tmux-options-table");
+
+		const tds = table?.querySelectorAll("td");
+
+		if (!tds) return;
+		const activeClasses = ["!bg-ctp-red", "text-ctp-base"];
+
+		function clearClasses() {
+			if (!tds) return;
+			[...tds]
+				.filter((td) => td.id)
+				.map((td) => td.parentElement)
+				.forEach((td) => {
+					td?.classList.remove(...activeClasses);
+				});
+		}
+
+		[...tds]
+			.filter((td) => td.id)
+			.map((td) => [td.parentElement, td.id] as [HTMLElement, string])
+			.forEach(([td, id]) => {
+				if (!td) return;
+				if (window.location.hash.slice(1) === id)
+					td.classList.add(...activeClasses);
+				td.addEventListener("click", () => {
+					window.location.hash = id;
+					clearClasses();
+					td.classList.add(...activeClasses);
+				});
+			});
+
+		loaded = true;
+	}
+
+	listener();
+
+	document.addEventListener("astro:before-swap", () => (loaded = false));
+	document.addEventListener("astro:after-swap", listener);
+	window.addEventListener("DOMContentLoaded", listener);
+</script>

@@ -1,5 +1,124 @@
 ---
+import { Icon } from "astro-icon/components";
+import { getEntry } from "astro:content";
+import { Heading } from "../components";
 import Base from "../layouts/Base.astro";
+import { cn } from "../styles/cn";
+import { getIcon } from "../styles/icon";
+
+const data = await getEntry("configs", "zsh");
+
+const { plugins, aliases } =
+	(data?.data as Record<"plugins" | "aliases", Record<string, string>>) || {};
 ---
 
-<Base> ZSH </Base>
+<Base>
+	<div class="flex items-center flex-col justify-center">
+		<div class="flex items-center text-3xl gap-2">
+			<Icon name={getIcon("zsh")} />
+			<h1>ZSH</h1>
+		</div>
+
+		<Heading id="plugins" class="my-2">Plugins</Heading>
+		<ul class="grid grid-cols-4 gap-2">
+			{
+				Object.entries(plugins)
+					.sort(([a], [b]) => a.localeCompare(b))
+					.map(([key, val]) => {
+						const icon = getIcon(key);
+						return (
+							<li>
+								<a
+									target="_blank"
+									rel="noreferrer"
+									href={val}
+									class={cn("flex gap-2 items-center justify-start", {
+										"ml-6": !icon,
+									})}
+								>
+									{icon && <Icon name={icon} />}
+									<span> {key}</span>
+								</a>
+							</li>
+						);
+					})
+			}
+		</ul>
+
+		<Heading id="aliases" class="my-2">Aliases</Heading>
+
+		<table id="alias-table" class="divide-y divide-ctp-text-300">
+			<thead>
+				<tr>
+					<td class="text-center">Alias</td>
+					<td class="text-center">Command</td>
+				</tr>
+			</thead>
+			<tbody>
+				{
+					Object.entries(aliases).map(([key, val]) => {
+						const isScript = val.includes(".sh");
+						const path = val.replace(". ", "").trim();
+						const script =
+							isScript &&
+							`https://github.com/stephansama/scripts/blob/main/${path}`;
+						return (
+							<tr class="even:bg-ctp-mantle">
+								<td id={key} class={cn("pl-4 pr-2 scroll-m-16")}>
+									{key}
+								</td>
+								<td class="pr-4 pl-2">
+									{!script ? (
+										<code>{val}</code>
+									) : (
+										<a href={script} target="_blank" rel="noreferrer">
+											<code>{val}</code>
+										</a>
+									)}
+								</td>
+							</tr>
+						);
+					})
+				}
+			</tbody>
+		</table>
+	</div>
+</Base>
+
+<script>
+	function listener() {
+		const table = document.getElementById("alias-table");
+
+		const tds = table?.querySelectorAll("td");
+
+		if (!tds) return;
+		const activeClasses = ["!bg-ctp-red", "text-ctp-base"];
+
+		function clearClasses() {
+			if (!tds) return;
+			[...tds]
+				.filter((td) => td.id)
+				.map((td) => td.parentElement)
+				.forEach((td) => {
+					td?.classList.remove(...activeClasses);
+				});
+		}
+
+		[...tds]
+			.filter((td) => td.id)
+			.map((td) => [td.parentElement, td.id] as [HTMLElement, string])
+			.forEach(([td, id]) => {
+				if (!td) return;
+				if (window.location.hash.slice(1) === id)
+					td.classList.add(...activeClasses);
+				td.addEventListener("click", () => {
+					window.location.hash = id;
+					clearClasses();
+					td.classList.add(...activeClasses);
+				});
+			});
+	}
+
+	document.addEventListener("astro:after-swap", listener);
+	window.addEventListener("DOMContentLoaded", listener);
+</script>

@@ -24,13 +24,81 @@ const parsers: Partial<
 			options: parsed,
 		};
 	},
+	tmux(input) {
+		const lines = input.split("\n");
+		return lines.reduce((prev, curr) => {
+			if (curr.startsWith("#") || !curr) return { ...prev };
+			if (curr.startsWith("set")) {
+				const [set, flag, action, value, ...rest] = curr.split(" ");
+				return {
+					...prev,
+					set: [
+						...(prev.set || []),
+						[set, flag, action, value, rest.join(" ")].filter(Boolean),
+					],
+				};
+			}
+			if (curr.startsWith("bind")) {
+				const [bind, key, action, ...value] = curr.split(" ");
+				if (key === "-T") return { ...prev };
+				return {
+					...prev,
+					bind: [
+						...(prev.bind || []),
+						[bind, key, action, value.join(" ")].filter(Boolean),
+					],
+				};
+			}
+			return { ...prev };
+		}, {});
+	},
+	zsh(input) {
+		const lines = input.split("\n");
+		let mode: undefined | "plugins" | "aliases" = undefined;
+		return lines.reduce(
+			(prev, curr) => {
+				if (curr.replace(/\s/g, "") === ")" || !curr) {
+					mode = undefined;
+					return { ...prev };
+				}
+				if (curr.replace(/\s/g, "").startsWith("plugins")) {
+					mode = "plugins";
+					return { ...prev };
+				}
+				if (curr === "alias \\") {
+					mode = "aliases";
+					return { ...prev };
+				}
+				if (mode === "plugins") {
+					const [key, value] = curr.split("#").map((s) => s.replace(/\s/g, ""));
+					return { ...prev, [mode]: { ...prev[mode], [key]: value } };
+				}
+				if (mode === "aliases") {
+					const [key, value, ...rest] = curr.split("=");
+					return {
+						...prev,
+						[mode]: {
+							...prev[mode],
+							[key.replace(/\s/g, "")]: [value, rest]
+								.join("=")
+								?.replace("\\", "")
+								.replace(/\ ?=$/g, "")
+								.trim()
+								.slice(1, -1),
+						},
+					};
+				}
+				return { ...prev };
+			},
+			{} as Record<"plugins" | "aliases", Record<string, string>>,
+		);
+	},
 	brewfile(input) {
 		const lines = input.split("\n").filter(Boolean);
 
 		return lines.reduce(
 			(prev, curr) => {
-				// filter out comments
-				if (curr.startsWith("#")) return { ...prev };
+				if (curr.startsWith("#") || !curr) return { ...prev };
 
 				const key = curr.startsWith("brew")
 					? "brew"
@@ -39,7 +107,8 @@ const parsers: Partial<
 						: "unknown";
 
 				if (key === "unknown") {
-					return (console.error("unknown line ", curr), { ...prev });
+					console.error("unknown line ", curr);
+					return { ...prev };
 				}
 
 				const value = /"(.*?)"/g.exec(curr)?.at(0)?.replaceAll(/"/g, "");
