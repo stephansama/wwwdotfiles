@@ -8,7 +8,17 @@ export default defineConfig(
 			mpa: true,
 			description:
 				"Documentation on how to use the mad professor suite of utilities",
-			head: [["link", { href: "/favicon.svg", rel: "icon" }]],
+			head: [
+				["link", { href: "/favicon.svg", rel: "icon" }],
+				[
+					"meta",
+					{
+						content:
+							"https://og.madprofessorblog.org/api/foss/dotfiles.png",
+						property: "og:image",
+					},
+				],
+			],
 			markdown: {
 				theme: { dark: "catppuccin-mocha", light: "catppuccin-latte" },
 			},

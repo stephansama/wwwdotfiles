@@ -4,7 +4,7 @@ layout: home
 hero:
     name: "Dotfiles"
     text: "for @stephansama"
-    tagline: Open Source. Well Built. Ready to Ship.
+    tagline: Opinionated. Clean. Consistent.
     image:
         src: https://www.github.com/stephansama.png
         alt: Hero Image
