@@ -47,7 +47,7 @@ async function buildBrewFile() {
 	## Brew programs
 	${brewfileObj.brew
 		?.sort((a, b) => a.localeCompare(b))
-		?.map((cask) => `- [${cask}](https://formulae.brew.sh/cask/${cask})`)
+		?.map((cask) => `- [${cask}](https://formulae.brew.sh/formula/${cask})`)
 		.join("\n")}
 
 	## Cask
@@ -173,7 +173,9 @@ function parseBrewfile(input) {
 			? "brew"
 			: curr.startsWith("cask")
 				? "cask"
-				: "unknown";
+				: curr.startsWith("tap")
+					? "tap"
+					: "unknown";
 
 		if (key === "unknown") {
 			console.error("unknown line ", curr);
