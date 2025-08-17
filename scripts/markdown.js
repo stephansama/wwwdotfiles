@@ -63,7 +63,7 @@ function nvimGraphTemplate() {
 	return html`
 		<div id="graph"></div>
 
-		<script>
+		<script client>
 			import { Treemap } from "nanovis";
 			import { esbuildMetafileToTree } from "nanovis/esbuild";
 
@@ -138,7 +138,6 @@ async function buildTmuxFile() {
 
 async function buildZshFile() {
 	const zshrcFile = await fetchGitFile("stephansama", ".zshrc");
-	console.log(zshrcFile);
 	const zshrc = parseZsh(zshrcFile);
 	const file = md`
 	# ZSH

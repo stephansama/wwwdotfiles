@@ -4,6 +4,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vitepress dev",
+		"prebuild": "node ./scripts/markdown.js",
 		"build": "vitepress build",
 		"build:bloat": "node ./scripts/bloat.js",
 		"preview": "vitepress preview"

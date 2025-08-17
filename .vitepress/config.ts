@@ -5,6 +5,7 @@ import { withSidebar } from "vitepress-sidebar";
 export default defineConfig(
 	withSidebar(
 		{
+			mpa: true,
 			description:
 				"Documentation on how to use the mad professor suite of utilities",
 			head: [["link", { href: "/favicon.svg", rel: "icon" }]],
