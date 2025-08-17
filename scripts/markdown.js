@@ -1,21 +1,25 @@
+import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
 import { markdownTable } from "markdown-table";
 import dedent from "dedent";
 import toml from "@iarna/toml";
 
+import content from "./markdown.json" with { type: "json" };
+
 const md = dedent;
 const html = dedent;
 
 const outputDir = path.resolve("./configs/");
 
-await fsp.mkdir(path.resolve(outputDir));
+if (!fs.existsSync(outputDir)) await fsp.mkdir(path.resolve(outputDir));
 
 await Promise.all([
 	buildZshFile(),
-	buildTmuxFile(),
-	buildNvimFile(),
 	buildBrewFile(),
+	buildNvimFile(),
+	buildRootFile(),
+	buildTmuxFile(),
 	buildAtuinFile(),
 ]);
 
@@ -26,9 +30,11 @@ async function buildAtuinFile() {
 	);
 	const options = toml.parse(atuin);
 	const file = md`
-	# Atuin
+	${content.atuin.heading}
 
-![preview](https://raw.githubusercontent.com/atuinsh/atuin/d3059af815130f102dd97cb1d1e5030920754105/demo.gif)
+	${content.atuin.description}
+
+	![preview](${content.atuin.previewUrl})
 
 	## Options
 	${markdownTable([
@@ -46,12 +52,17 @@ async function buildBrewFile() {
 	const brewfile = await fetchGitFile("stephansama", "custom/macos/Brewfile");
 	const brewfileObj = parseBrewfile(brewfile);
 	const file = md`
-	# Brewfile
+	${content.brewfile.heading}
+
+	${content.brewfile.description}
 
 	## Brew programs
 	${brewfileObj.brew
 		?.sort((a, b) => a.localeCompare(b))
-		?.map((cask) => `- [${cask}](https://formulae.brew.sh/formula/${cask})`)
+		?.map(
+			(brew) =>
+				`- [${brew}](https://formulae.brew.sh/formula/${brew.split("/").at(-1)})`,
+		)
 		.join("\n")}
 
 	## Cask
@@ -93,17 +104,30 @@ function nvimGraphTemplate() {
 
 async function buildNvimFile() {
 	const file = md`
-# Neovim
+	${content.neovim.heading}
+
+	${content.neovim.description}
 
 	${nvimGraphTemplate()}
 	`;
 	await fsp.writeFile(outputFilename("neovim.md"), file);
 }
 
+async function buildRootFile() {
+	const file = md`
+	# Configs
+
+	${Object.keys(content)
+		.map((key) => `- [${key}](/configs/${key})`)
+		.join("\n")}
+
+	`;
+
+	await fsp.writeFile(outputFilename("index.md"), file);
+}
+
 async function buildTmuxFile() {
 	const text = await fetchGitFile("stephansama", ".tmux.conf");
-
-	const heading = "# TMUX";
 
 	const tmuxObj = parseTmux(text);
 
@@ -114,9 +138,9 @@ async function buildTmuxFile() {
 		.join("\n");
 
 	const file = md`
-	${heading}
+	${content.tmux.heading}
 
-	\`tmux\` is a terminal multiplexer that lets you run, organize, and manage multiple terminal sessions from a single window. It allows you to split panes, detach and reattach to sessions, and keep long-running processes alive even after disconnecting. For anyone with a terminal-centric workflow, tmux is essential: it streamlines multitasking, preserves your environment across sessions, and turns the command line into a powerful, persistent workspace.
+	${content.tmux.description}
 
 	## 🧩 TPM Plugins
 
@@ -125,8 +149,11 @@ async function buildTmuxFile() {
 	## ⚙️ Configurations
 
 	${markdownTable([
-		["action", "flag", "target", "something else"],
-		...tmuxObj.set.filter(([_, __, target]) => !target.startsWith("@")),
+		["action", "flag", "target"],
+		...tmuxObj.set
+			.filter(([_, __, target]) => !target.startsWith("@"))
+			.sort(([a], [b]) => a.localeCompare(b))
+			.map((params) => params.slice(0, 4).map(wrapInlineCode)),
 	])}
 
 	## ⌨️ Keybindings
@@ -144,21 +171,22 @@ async function buildZshFile() {
 	const zshrcFile = await fetchGitFile("stephansama", ".zshrc");
 	const zshrc = parseZsh(zshrcFile);
 	const file = md`
-	# ZSH
+	${content.zsh.heading}
 
-	## Aliases
-	${markdownTable([
-		["Shortcut", "Full expression"],
-		//
-		...Object.entries(zshrc.aliases).map(([key, val]) =>
-			[key, val].map(wrapInlineCode),
-		),
-	])}
+	${content.zsh.description}
 
 	## 🧩 Plugins
 	${Object.entries(zshrc.plugins)
 		.map(([key, val]) => `- [${key}](${val})`)
 		.join("\n")}
+
+	## Aliases
+	${markdownTable([
+		["Shortcut", "Full expression"],
+		...Object.entries(zshrc.aliases).map(([key, val]) =>
+			[key, val].map(wrapInlineCode),
+		),
+	])}
 	`;
 	await fsp.writeFile(outputFilename("zsh.md"), file);
 }

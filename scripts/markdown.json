@@ -1,0 +1,23 @@
+{
+	"atuin": {
+		"previewUrl": "https://raw.githubusercontent.com/atuinsh/atuin/d3059af815130f102dd97cb1d1e5030920754105/demo.gif",
+		"heading": "# Atuin",
+		"description": "Atuin replaces your shell’s default history with a SQLite-backed database. Instead of being limited to a flat text file, it enables powerful full-text search, timestamps, and metadata for every command you’ve ever run. It also supports secure syncing across devices. My configuration optimizes Atuin for fast recall and a smoother history workflow in daily use."
+	},
+	"brewfile": {
+		"heading": "# Brewfile",
+		"description": "A Brewfile is a declarative manifest used by Homebrew to define system dependencies. Instead of installing tools one-by-one, the Brewfile allows you to specify formulae (CLI tools), casks (applications), and taps (repositories) in a single file. Running brew bundle automatically provisions your environment to match. My Brewfile ensures that essential tools and apps can be installed consistently on any machine."
+	},
+	"neovim": {
+		"heading": "# Neovim",
+		"description": "`neovim` is a modernized fork of Vim, designed to provide a more extensible and maintainable code editor. It embeds a powerful Lua runtime for configuration and plugin development, allowing for a highly programmable workflow. My configuration is built as a Lua-based framework, offering opinionated defaults, streamlined navigation, and curated plugins for a focused coding experience"
+	},
+	"tmux": {
+		"heading": "# TMUX",
+		"description": "`tmux` is a terminal multiplexer that lets you run, organize, and manage multiple terminal sessions from a single window. It allows you to split panes, detach and reattach to sessions, and keep long-running processes alive even after disconnecting. For anyone with a terminal-centric workflow, tmux is essential: it streamlines multitasking, preserves your environment across sessions, and turns the command line into a powerful, persistent workspace."
+	},
+	"zsh": {
+		"heading": "# ZSH",
+		"description": "Zsh is a feature-rich shell that extends the traditional Bourne shell with advanced completion, globbing, and scripting capabilities. It’s highly customizable and widely adopted as a default interactive shell. My setup layers in aliases, functions, and prompt customizations to create a terminal environment that’s both efficient and pleasant to work in."
+	}
+}

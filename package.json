@@ -3,6 +3,7 @@
 	"version": "0.0.1",
 	"type": "module",
 	"scripts": {
+		"predev": "node ./scripts/markdown.js",
 		"dev": "vitepress dev",
 		"prebuild": "node ./scripts/markdown.js",
 		"build": "vitepress build",

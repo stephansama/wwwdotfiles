@@ -52,6 +52,7 @@ export default defineConfig(
 		},
 		{
 			useTitleFromFileHeading: true,
+			useFolderTitleFromIndexFile: true,
 		},
 	),
 );
