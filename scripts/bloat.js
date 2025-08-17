@@ -1,23 +1,30 @@
 #!/usr/bin/env node
 
-import fs from "node:fs";
-import os from "node:os";
+import * as fsp from "node:fs/promises";
+import * as fs from "node:fs";
+import * as os from "node:os";
+import * as path from "node:path";
 
-const home = os.homedir();
+const output = path.resolve("./public/nvim.json");
 
-const bloat = fs.readFileSync(`${home}/nvim-bloat-analysis.json`, {
-	encoding: "utf8",
-});
+if (fs.existsSync(output)) {
+	console.info("output file already exists");
+	process.exit(0);
+}
+
+const bloatFn = `${os.homedir()}/nvim-bloat-analysis.json`;
+
+const bloat = await fsp.readFile(bloatFn, { encoding: "utf8" });
 
 const bloatJson = JSON.parse(bloat);
 
-fs.writeFileSync("./public/nvim.json", JSON.stringify(removePrefix(bloatJson)));
+await fsp.writeFile(output, JSON.stringify(removePrefix(bloatJson)));
 
 function removePrefix(obj) {
 	for (const [key, value] of Object.entries(obj)) {
 		if (typeof value !== "object") continue;
 		delete obj[key];
-		const newKey = key.replace(/^.*\.local\/share\/nvim/g, "");
+		const newKey = key.replace(/^.*\.local\/share\/nvim\/lazy\//g, "");
 		obj[newKey] = removePrefix(value);
 	}
 	return obj;

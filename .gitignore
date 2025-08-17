@@ -1,3 +1,5 @@
+**/.vitepress/cache
 .astro
 dist
 node_modules
+configs/*.md
