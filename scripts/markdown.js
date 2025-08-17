@@ -7,6 +7,10 @@ import toml from "@iarna/toml";
 const md = dedent;
 const html = dedent;
 
+const outputDir = path.resolve("./configs/");
+
+await fsp.mkdir(path.resolve(outputDir));
+
 await Promise.all([
 	buildZshFile(),
 	buildTmuxFile(),
@@ -265,7 +269,6 @@ function parseTmux(input) {
 }
 
 function outputFilename(filename) {
-	const outputDir = path.resolve("./configs/");
 	return path.resolve(outputDir, filename);
 }
 
