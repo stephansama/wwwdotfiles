@@ -9,8 +9,6 @@ export default defineConfig(
 			description:
 				"Documentation on how to use the mad professor suite of utilities",
 			head: [["link", { href: "/favicon.svg", rel: "icon" }]],
-			ignoreDeadLinks: true,
-			lastUpdated: true,
 			markdown: {
 				theme: { dark: "catppuccin-mocha", light: "catppuccin-latte" },
 			},
@@ -28,7 +26,6 @@ export default defineConfig(
 						text: "Blog",
 					},
 				],
-				search: { options: { detailedView: true }, provider: "local" },
 				socialLinks: [
 					{
 						icon: "bluesky",

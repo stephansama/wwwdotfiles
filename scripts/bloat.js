@@ -24,7 +24,7 @@ function removePrefix(obj) {
 	for (const [key, value] of Object.entries(obj)) {
 		if (typeof value !== "object") continue;
 		delete obj[key];
-		const newKey = key.replace(/^.*\.local\/share\/nvim/g, "");
+		const newKey = key.replace(/^.*\.local\/share\/nvim\/lazy\//g, "");
 		obj[newKey] = removePrefix(value);
 	}
 	return obj;
